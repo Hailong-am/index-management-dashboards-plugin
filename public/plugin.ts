@@ -29,40 +29,6 @@ export class IndexManagementPlugin implements Plugin<IndexManagementPluginSetup,
 
   public setup(core: CoreSetup, { management }: IndexManagementSetupDependencies): IndexManagementPluginSetup {
     JobHandlerRegister(core);
-    if (!controlCenter) {
-      // regiester under plugins section
-      core.application.register({
-        id: "opensearch_index_management_dashboards",
-        title: "Index Management",
-        order: 7000,
-        category: {
-          id: "opensearch",
-          label: "OpenSearch Plugins",
-          order: 2000,
-        },
-        mount: async (params: AppMountParameters) => {
-          const { renderApp } = await import("./index_management_app");
-          const [coreStart] = await core.getStartServices();
-          return renderApp(coreStart, params, ROUTES.INDEX_POLICIES);
-        },
-      });
-
-      core.application.register({
-        id: "opensearch_snapshot_management_dashboards",
-        title: "Snapshot Management",
-        order: 7000,
-        category: {
-          id: "opensearch",
-          label: "OpenSearch Plugins",
-          order: 2000,
-        },
-        mount: async (params: AppMountParameters) => {
-          const { renderApp } = await import("./index_management_app");
-          const [coreStart] = await core.getStartServices();
-          return renderApp(coreStart, params, ROUTES.SNAPSHOT_POLICIES);
-        },
-      });
-    }
 
     // register with management app
     const indexManagementSection = management.sections.section.indexManagement;

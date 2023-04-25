@@ -55,6 +55,7 @@ export function renderManagementApp(
 
   const isDarkMode = coreStart.uiSettings.get("theme:darkMode") || false;
 
+  // const coreStartAsScope = { ...coreStart, chrome: { ...coreStart.chrome, setBreadcrumbs: params.setBreadcrumbs } };
   const coreStartAsScope = { ...coreStart, chrome: { ...coreStart.chrome } };
   const handler = ({ newURL, oldURL }: HashChangeEvent) => {
     const previousUrlObject = new URL(oldURL);
@@ -65,8 +66,12 @@ export function renderManagementApp(
     const currentApp = indexManagementItems.find((item) =>
       item.hashRoutes.some((hashRoute) => matchPath(currentUrlObject.hash.replace(/^#?/, "").replace(/\?.*$/, ""), hashRoute))
     );
+    console.log(`previousApp: ${previousApp?.id}, currentApp: ${currentApp?.id}`);
     if (previousApp && currentApp && previousApp.id !== currentApp.id) {
-      params.history.replace(`../${currentApp.id}`);
+      // const pathname = currentUrlObject.pathname.replace(previousApp.id, currentApp.id)
+      // params.history.replace(`../${currentApp.id}/${currentUrlObject.hash}${currentUrlObject.search}`);
+      params.history.replace(`../${currentApp.id}${currentUrlObject.hash}`);
+      // params.history.pushState({}, "", `../${currentApp.id}/${currentUrlObject.hash}${currentUrlObject.search}`);
     }
   };
 
