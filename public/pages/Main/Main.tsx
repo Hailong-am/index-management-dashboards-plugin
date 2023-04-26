@@ -4,7 +4,7 @@
  */
 
 import React, { Component } from "react";
-import { Switch, Route, Redirect, RouteComponentProps } from "react-router-dom";
+import { Switch, Route, Redirect, RouteComponentProps, RouteProps } from "react-router-dom";
 // @ts-ignore
 import { EuiSideNav, EuiPage, EuiPageBody, EuiPageSideBar } from "@elastic/eui";
 import { CoreStart } from "opensearch-dashboards/public";
@@ -17,7 +17,7 @@ import ChangePolicy from "../ChangePolicy";
 import PolicyDetails from "../PolicyDetails/containers/PolicyDetails";
 import Rollups from "../Rollups";
 import { ModalProvider, ModalRoot } from "../../components/Modal";
-import { ServicesConsumer, ServicesContext } from "../../services";
+import { ServicesConsumer } from "../../services";
 import { BrowserServices } from "../../models/interfaces";
 import { ROUTES } from "../../utils/constants";
 import { CoreServicesConsumer } from "../../components/core_services";
@@ -111,7 +111,15 @@ const HIDDEN_NAV_STARTS_WITH_ROUTE = [
 
 const ROUTE_STYLE = { padding: "0px" };
 
-export const indexManagementItems = [
+export interface ManagementRouterItem {
+  id: string;
+  title: string;
+  order: number;
+  landingPage: string;
+  hashRoutes: RouteProps[];
+}
+
+export const indexManagementItems: ManagementRouterItem[] = [
   {
     id: "indexPolicies",
     title: Navigation.IndexPolicies,
@@ -141,6 +149,18 @@ export const indexManagementItems = [
                 <div style={ROUTE_STYLE}>
                   <PolicyDetails {...props} policyService={services.policyService} />
                 </div>
+              )
+            }
+          </ServicesConsumer>
+        ),
+      },
+      {
+        path: ROUTES.CHANGE_POLICY,
+        render: (props: RouteComponentProps) => (
+          <ServicesConsumer>
+            {(services: BrowserServices | null) =>
+              services && (
+                <ChangePolicy {...props} managedIndexService={services.managedIndexService} indexService={services.indexService} />
               )
             }
           </ServicesConsumer>
@@ -599,7 +619,7 @@ export const indexManagementItems = [
   },
 ];
 
-const snapshotManagementItems = [
+export const snapshotManagementItems: ManagementRouterItem[] = [
   {
     id: "snapshots",
     title: Navigation.Snapshots,
